@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +17,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {children}
+        <footer className="footer_container  bg-slate-800">
+          <div className="flex pr-4 justify-end">
+            <Image
+              src="/logo_gennyconnect.png"
+              alt="footer"
+              width={30}
+              height={30}
+              className="mr-3"
+            />
+            <p>© 2024 GennyConnect. All rights reserved</p>
+          </div>
+          <div className="flex justify-between align-middle w-1/2">
+            <p>Cookies settings</p>
+            <p>Sitemap</p>
+            <p>Privacy policy</p>
+            <p>Terms of use</p>
+          </div>
+        </footer>
+      </body>
     </html>
   );
 }
