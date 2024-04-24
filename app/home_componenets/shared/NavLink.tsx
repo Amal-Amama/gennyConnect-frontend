@@ -9,7 +9,6 @@ const NavLinks = ({ title, path }: { title: string; path: string }) => {
   return (
     <li className={path !== "/login" ? "navlink" : "login_style"}>
       <a href={path}>{title}</a>
-      hh
     </li>
   );
 };
