@@ -35,12 +35,28 @@ const PDFUpload = ({ id, onInput, errorText }: any) => {
   const pickedHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     let pickedFiles: File[] = [];
     let fileIsValid = isValid;
+
     if (event.target.files && event.target.files.length > 0) {
       pickedFiles = Array.from(event.target.files);
-      setFiles(pickedFiles);
-      setSelectedFileNames(pickedFiles.map((file) => file.name));
-      setIsValid(true);
-      fileIsValid = true;
+
+      // Si l'id est "certifications", autoriser la sélection de plusieurs fichiers
+      if (id === "certifications") {
+        setFiles(pickedFiles);
+        setSelectedFileNames(pickedFiles.map((file) => file.name));
+        setIsValid(true);
+        fileIsValid = true;
+      } else if (id === "diplome") {
+        // Si l'id est "diplome", vérifier qu'un seul fichier a été sélectionné
+        if (pickedFiles.length === 1) {
+          setFiles(pickedFiles);
+          setSelectedFileNames(pickedFiles.map((file) => file.name));
+          setIsValid(true);
+          fileIsValid = true;
+        } else {
+          setIsValid(false);
+          fileIsValid = false;
+        }
+      }
     } else {
       setIsValid(false);
       fileIsValid = false;

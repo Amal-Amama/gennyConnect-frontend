@@ -10,11 +10,11 @@ import {
 } from "../shared/util/validators";
 import Platform from "../componenets/platform_presentation";
 import useForm from "../shared/hooks/form-hook";
-import PhoneForm from "./componenets/phone";
-import LanguageForm from "./componenets/language";
+import PhoneForm from "./componenets/phoneInput";
+import LanguageForm from "./componenets/languageInput";
 import ImageUpload from "../shared/FormElements/ImageUpload";
 import PDFUpload from "../shared/FormElements/PDFUpload";
-import InstitutionType from "./componenets/medInstituteType";
+import InstitutionType from "./componenets/medInstituteTypeInput";
 
 const ROLES = [
   { id: "technician", role: "technician", imageSrc: "/technician_role.png" },

@@ -1,22 +1,46 @@
 "use client";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import Platform from "../componenets/platform_presentation";
 import Input from "../shared/FormElements/Input";
 import {
   VALIDATOR_EMAIL,
+  VALIDATOR_MAXLENGTH,
   VALIDATOR_MINLENGTH,
+  VALIDATOR_REQUIRE,
 } from "../shared/util/validators";
 import useForm from "../shared/hooks/form-hook";
 
 const Login = () => {
-  const [formState, inputHandler] = useForm(
+  const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
+  const [formState, inputHandler, setFormData] = useForm(
     {
       email: { value: "", isValid: false },
       password: { value: "", isValid: false },
     },
     false
   );
+  const switchResetHandler = () => {
+    if (isLoginMode) {
+      setFormData(
+        {
+          ...formState.iputs,
+          email: undefined,
+          password: { value: "", isValid: false },
+        },
+        formState.inputs.password.isValid
+      );
+    } else {
+      setFormData(
+        {
+          ...formState.inputs,
+          email: { value: "", isValid: false },
+        },
+        false
+      );
+    }
+    setIsLoginMode((prevMode) => !prevMode);
+  };
   const loginSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log(formState.inputs);
@@ -42,29 +66,46 @@ const Login = () => {
         <div className=" max-w-3xl w-full  relative flex flex-col rounded-md text-black h-full bg-white mr-40 p-32 mt-16">
           <p className=" text-2xl text-[#7747ff] font-semibold tracking-tighter relative flex items-center pl-8 mb-4 ">
             <span className="absolute h-5 rounded-full left-0 w-5 bg-[#7747ff]"></span>
-            Login
+            {isLoginMode ? "Login" : "Reset_Password"}
             <span className="absolute h-5 w-5 rounded-full left-0 bg-[#7747ff] animate-ping"></span>
           </p>
-          <div className="text-2xl font-bold mb-2 text-[#1e0e4b] text-center">
-            Welcome back to
-            <span className="text-[#7747ff] ml-2 mb-10">Genny_Connect</span>
-          </div>
+          {isLoginMode && (
+            <div className="text-2xl font-bold mb-2 text-[#1e0e4b] text-center">
+              Welcome back to
+              <span className="text-[#7747ff] ml-2 mb-10">Genny_Connect</span>
+            </div>
+          )}
           <div className="text-sm font-normal mb-4 mt-4 text-center text-[#1e0e4b]">
-            Log in to your account
+            {isLoginMode
+              ? " Log in to your account"
+              : "reset your password and login again"}
           </div>
           <form onSubmit={loginSubmitHandler} className="flex flex-col gap-3">
             <div className="block relative">
+              {isLoginMode && (
+                <Input
+                  element="input"
+                  id="email"
+                  type="email"
+                  label="E-mail"
+                  validators={[VALIDATOR_EMAIL()]}
+                  errorText="Please enter a Valid email address"
+                  onInput={inputHandler}
+                  className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
+                />
+              )}
+            </div>
+            {!isLoginMode && (
               <Input
                 element="input"
-                id="email"
-                type="email"
-                label="E-mail"
-                validators={[VALIDATOR_EMAIL()]}
-                errorText="Please enter a Valid email address"
+                id="codeVerification"
+                type="text"
+                label="OTP verificationCode"
+                validators={[VALIDATOR_REQUIRE(), VALIDATOR_MAXLENGTH(4)]}
+                errorText="PLease Tap the verification code from email, maximum 4 chiffres"
                 onInput={inputHandler}
-                className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
               />
-            </div>
+            )}
             <div className="block relative">
               <Input
                 element="input"
@@ -78,9 +119,17 @@ const Login = () => {
               />
             </div>
             <div>
-              <a className="text-sm text-[#7747ff]" href="#">
+              {/* <a className="text-sm text-[#7747ff]" href="/reset_password">
                 Forgot your password?
-              </a>
+              </a> */}
+              {isLoginMode && (
+                <button
+                  onClick={switchResetHandler}
+                  className="text-sm text-[#7747ff]"
+                >
+                  Forgot your password?
+                </button>
+              )}
             </div>
             <button
               type="submit"
@@ -95,12 +144,14 @@ const Login = () => {
               Submit
             </button>
           </form>
-          <div className="text-sm text-center mt-[1.6rem]">
-            Don’t have an account yet?<span className="mr-2"></span>
-            <a className="text-sm text-[#7747ff]" href="/register">
-              Sign up for free!
-            </a>
-          </div>
+          {isLoginMode && (
+            <div className="text-sm text-center mt-[1.6rem]">
+              Don’t have an account yet?<span className="mr-2"></span>
+              <a className="text-sm text-[#7747ff]" href="/register">
+                Sign up for free!
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>
