@@ -1,10 +1,9 @@
 import Image from "next/image";
-import NavLink from "./home_componenets/shared/NavLink";
-import Link from "next/link";
-import Carrousel from "./home_componenets/shared/Carrousel";
-import AboutUs from "./home_componenets/constructer_componenets/AboutUs";
-import Services from "./home_componenets/constructer_componenets/services";
-import ContactUs from "./home_componenets/constructer_componenets/ContactUs";
+import NavLink from "./shared/componenets/NavLink";
+import Carrousel from "./shared/componenets/Carrousel";
+import AboutUs from "./componenets/home_componenets/AboutUs";
+import Services from "./componenets/home_componenets/services";
+import ContactUs from "./componenets/home_componenets/ContactUs";
 
 export default function Home() {
   const Navlinks = [

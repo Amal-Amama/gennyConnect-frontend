@@ -1,48 +1,29 @@
+"use client";
 import Image from "next/image";
 import React from "react";
-const benefits = [
-  {
-    description: (
-      <p>
-        <strong>Request Management: </strong> <br />
-        Submission and tracking of requests in real time with optimal selection
-        of technicians.
-      </p>
-    ),
-  },
-  {
-    description: (
-      <p>
-        <strong>Direct Communication: </strong> <br />
-        Direct contact with technicians for personalized follow-up and total
-        peace of mind
-      </p>
-    ),
-  },
-  {
-    description: (
-      <p>
-        <strong> Accurate diagnosis :</strong>
-        <br />
-        Accurate diagnostics and reporting detailed at each stage for informed
-        decisions.
-      </p>
-    ),
-  },
-  {
-    description: (
-      <p>
-        <strong>Analysis and Optimization : </strong> <br />
-        Advanced analysis for proactive maintenance and reduced operational
-        costs.
-      </p>
-    ),
-  },
-];
+import Platform from "../componenets/platform_presentation";
+import Input from "../shared/FormElements/Input";
+import {
+  VALIDATOR_EMAIL,
+  VALIDATOR_MINLENGTH,
+} from "../shared/util/validators";
+import useForm from "../shared/hooks/form-hook";
+
 const Login = () => {
+  const [formState, inputHandler] = useForm(
+    {
+      email: { value: "", isValid: false },
+      password: { value: "", isValid: false },
+    },
+    false
+  );
+  const loginSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log(formState.inputs);
+  };
   return (
     <div>
-      <div className="flex flex-col justify-center items-center pt-16">
+      <div className="flex flex-col justify-center items-center pt-14">
         <div className="flex flex-row justify-between items-center  w-40 pb-4">
           <Image
             src="/logo_gennyconnect.png"
@@ -56,71 +37,43 @@ const Login = () => {
           #1 Software of Maintenance and Reliability Teams
         </h3>
       </div>
-      <div className="flex flex-row justify-between items-start  bg-red-400 ">
-        <div className="flex flex-col justify-between w-1/4 pl-16 pr-8 pt-16 pb-32 font-serif">
-          <Image
-            src="/multi_views.jpeg"
-            alt="logo"
-            width={300}
-            height={300}
-            className="mb-6 shadow-2xl"
-          />
-          <p>
-            <span className="ml-6"></span> With CennyConnect, benefit from
-            proactive and efficient management of your medical equipment,
-            optimize your operations and ensure continuity of care.
+      <div className="flex flex-row justify-between items-start pt-16">
+        <Platform />
+        <div className=" max-w-3xl w-full  relative flex flex-col rounded-md text-black h-full bg-white mr-40 p-32 mt-16">
+          <p className=" text-2xl text-[#7747ff] font-semibold tracking-tighter relative flex items-center pl-8 mb-4 ">
+            <span className="absolute h-5 rounded-full left-0 w-5 bg-[#7747ff]"></span>
+            Login
+            <span className="absolute h-5 w-5 rounded-full left-0 bg-[#7747ff] animate-ping"></span>
           </p>
-          <ul>
-            {benefits.map((benefit, index) => (
-              <li
-                key={index}
-                className="flex flex-row justify-between items-start w-60 py-2 mt-5 "
-              >
-                <Image
-                  src="/checkbtn.png"
-                  alt="checkLoginbnt"
-                  width={20}
-                  height={20}
-                  className="mr-4"
-                />
-                {benefit.description}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className=" max-w-3xl w-full  relative flex flex-col p-4 rounded-md text-black h-full bg-white mr-40">
           <div className="text-2xl font-bold mb-2 text-[#1e0e4b] text-center">
             Welcome back to
-            <span className="text-[#7747ff]">Genny_Connect</span>
+            <span className="text-[#7747ff] ml-2 mb-10">Genny_Connect</span>
           </div>
-          <div className="text-sm font-normal mb-4 text-center text-[#1e0e4b]">
+          <div className="text-sm font-normal mb-4 mt-4 text-center text-[#1e0e4b]">
             Log in to your account
           </div>
-          <form className="flex flex-col gap-3">
+          <form onSubmit={loginSubmitHandler} className="flex flex-col gap-3">
             <div className="block relative">
-              <label
-                htmlFor="email"
-                className="block text-gray-600 cursor-text text-sm leading-[140%] font-normal mb-2"
-              >
-                Email
-              </label>
-              <input
-                type="text"
+              <Input
+                element="input"
                 id="email"
-                className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0"
+                type="email"
+                label="E-mail"
+                validators={[VALIDATOR_EMAIL()]}
+                errorText="Please enter a Valid email address"
+                onInput={inputHandler}
+                className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
               />
             </div>
             <div className="block relative">
-              <label
-                htmlFor="password"
-                className="block text-gray-600 cursor-text text-sm leading-[140%] font-normal mb-2"
-              >
-                Password
-              </label>
-              <input
-                type="text"
+              <Input
+                element="input"
                 id="password"
+                type="Password"
+                label="Password"
+                validators={[VALIDATOR_MINLENGTH(5)]}
+                errorText="Please enter a valid password,at least 5 characters"
+                onInput={inputHandler}
                 className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2 ring-gray-900 outline-0"
               />
             </div>
@@ -131,14 +84,20 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              className="bg-[#7747ff] w-max m-auto px-6 py-2 rounded text-white text-sm font-normal"
+              disabled={!formState.isValid}
+              className={`
+                  text-white font-medium py-2 px-4 rounded-full shadow focus:outline-none ${
+                    !formState.isValid
+                      ? "bg-gray-400"
+                      : "bg-blue-500  hover:bg-blue-700"
+                  }`}
             >
               Submit
             </button>
           </form>
           <div className="text-sm text-center mt-[1.6rem]">
-            Don’t have an account yet?{" "}
-            <a className="text-sm text-[#7747ff]" href="#">
+            Don’t have an account yet?<span className="mr-2"></span>
+            <a className="text-sm text-[#7747ff]" href="/register">
               Sign up for free!
             </a>
           </div>

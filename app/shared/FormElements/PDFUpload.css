@@ -1,0 +1,30 @@
+.PDF-upload {
+  display: flex;
+  flex-direction: column;
+}
+
+.PDF-upload__preview {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.PDF-upload__preview img {
+  max-width: 100%;
+  max-height: 200px;
+  margin: 0.5rem;
+}
+
+.PDF-upload__button {
+  margin-top: 1rem;
+  border: 2px solid #3182ce;
+  background-color: #3182ce;
+  color: white;
+  cursor: pointer;
+}
+
+.PDF-upload__button:hover {
+  background-color: #2c5282;
+}

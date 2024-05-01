@@ -1,5 +1,5 @@
 import React from "react";
-import Card from "../shared/Card";
+import Card from "../../shared/componenets/Card";
 import Image from "next/image";
 
 const Services = (props: any) => {
