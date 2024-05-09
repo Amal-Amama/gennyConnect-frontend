@@ -11,8 +11,8 @@ const LanguageForm = ({ id, inputHandler }: any) => {
     const selectedLang = event.target.value;
     if (selectedLang && !selectedLanguages.includes(selectedLang)) {
       setSelectedLanguages([...selectedLanguages, selectedLang]);
-      inputHandler("languages", [...selectedLanguages, selectedLang], true);
     }
+    inputHandler("languages", [...selectedLanguages, selectedLang], true);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,29 +28,33 @@ const LanguageForm = ({ id, inputHandler }: any) => {
   const selectedLanguagesText = selectedLanguages.join(", ");
 
   return (
-    <div className="flex flex-row w-full">
-      <label htmlFor="language" />
-      <select
-        id="language"
-        onChange={handleLanguageChange}
-        className="w-0 rounded border border-gray-200   text-sm font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4  "
-      >
-        <option value="" />
-        {possibleLanguages.map((language, index) => (
-          <option key={index} value={language}>
-            {language}
-          </option>
-        ))}
-      </select>
+    <div>
+      <label htmlFor="language" className=" text-gray-700 font-sans text-sm">
+        spoken_Languages
+      </label>
+      <div className="flex flex-row w-full mt-3">
+        <select
+          id="language"
+          onChange={handleLanguageChange}
+          className="w-0 rounded border border-gray-200   text-sm font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4  "
+        >
+          <option value="" />
+          {possibleLanguages.map((language, index) => (
+            <option key={index} value={language}>
+              {language}
+            </option>
+          ))}
+        </select>
 
-      <input
-        id={id}
-        type="text"
-        value={selectedLanguagesText}
-        placeholder="Choose your spoken languages"
-        onChange={handleInputChange}
-        className="w-11/12 rounded  bg-slate-50 border border-gray-300 mb-4 focus:bg-gray-300 focus:border-purple-600 h-11"
-      />
+        <input
+          id={id}
+          type="text"
+          value={selectedLanguagesText}
+          placeholder="Choose your spoken languages"
+          onChange={handleInputChange}
+          className="w-11/12 rounded  bg-slate-50 border border-gray-300 mb-4 focus:bg-gray-300 focus:border-purple-600 h-11"
+        />
+      </div>
     </div>
   );
 };

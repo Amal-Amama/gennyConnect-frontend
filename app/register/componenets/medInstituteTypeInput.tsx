@@ -5,7 +5,6 @@ const possibleTypes: string[] = [
   "Clinic",
   "Hospital",
   "Pharmacy",
-  "Parapharmacy",
 ];
 
 const InstitutionType = ({ id, inputHandler }: any) => {

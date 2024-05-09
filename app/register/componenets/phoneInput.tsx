@@ -28,32 +28,36 @@ const PhoneForm = ({ id, inputHandler }: any) => {
   };
 
   return (
-    <div className="flex flex-row w-full">
-      <label htmlFor="country" />
-      <select
-        id="country"
-        value={selectedCountry}
-        onChange={handleCountryChange}
-        className="border border-gray-200  bg-slate-50 text-sm font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
-      >
-        {countryCodes.map((country, index) => (
-          <option key={index} value={country.code}>
-            {country.name !== "country"
-              ? `${country.name} (${country.code})`
-              : country.name}
-          </option>
-        ))}
-      </select>
-      <label htmlFor="phoneNumber" />
-      <input
-        type="tel"
-        id={id}
-        value={phoneNumber}
-        onChange={handlePhoneChange}
-        placeholder="select a country and enter your phone number"
-        disabled={phoneNumberDisabled}
-        className="w-4/5 bg-slate-50 border border-gray-300 mb-4 focus:bg-gray-300 focus:border-purple-600 h-11"
-      />
+    <div>
+      <label htmlFor={id} className=" text-gray-700 font-sans text-sm">
+        phone_Number
+      </label>
+      <div className="flex flex-row w-full mt-2">
+        <label htmlFor="country" />
+        <select
+          id="country"
+          value={selectedCountry}
+          onChange={handleCountryChange}
+          className="border border-gray-200  bg-slate-50 text-sm font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
+        >
+          {countryCodes.map((country, index) => (
+            <option key={index} value={country.code}>
+              {country.name !== "country"
+                ? `${country.name} (${country.code})`
+                : country.name}
+            </option>
+          ))}
+        </select>
+        <input
+          type="tel"
+          id={id}
+          value={phoneNumber}
+          onChange={handlePhoneChange}
+          placeholder="select a country and enter your phone number"
+          disabled={phoneNumberDisabled}
+          className="w-4/5 bg-slate-50 border border-gray-300 mb-4 focus:bg-gray-300 focus:border-purple-600 h-11"
+        />
+      </div>
     </div>
   );
 };

@@ -5,14 +5,14 @@ import Platform from "../componenets/platform_presentation";
 import Input from "../shared/FormElements/Input";
 import {
   VALIDATOR_EMAIL,
-  VALIDATOR_MAXLENGTH,
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
 } from "../shared/util/validators";
 import useForm from "../shared/hooks/form-hook";
 
 const Login = () => {
   const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
+  const [error, setError] = useState<null | undefined>(undefined);
+  const [message, setMessage] = useState<null | undefined>(undefined);
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: { value: "", isValid: false },
@@ -21,30 +21,81 @@ const Login = () => {
     false
   );
   const switchResetHandler = () => {
-    if (isLoginMode) {
+    if (!isLoginMode) {
       setFormData(
-        {
-          ...formState.iputs,
-          email: undefined,
-          password: { value: "", isValid: false },
-        },
-        formState.inputs.password.isValid
+        { ...formState.inputs, password: { value: "", isValid: false } },
+        false
       );
     } else {
       setFormData(
         {
           ...formState.inputs,
-          email: { value: "", isValid: false },
+          password: undefined,
         },
         false
       );
     }
     setIsLoginMode((prevMode) => !prevMode);
   };
-  const loginSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+
+  const loginSubmitHandler = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
+
+    if (isLoginMode) {
+      try {
+        const response = await fetch("http://localhost:5000/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        } else {
+          setMessage(responseData.message);
+        }
+      } catch (err: any) {
+        setError(err.message || "Something went wrong, please try again.");
+        throw err;
+      }
+    } else if (
+      !isLoginMode &&
+      formState.inputs.email.isValid &&
+      formState.isValid
+    ) {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/auth/reset-password",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: formState.inputs.email.value,
+            }),
+          }
+        );
+        const responseData = await response.json();
+        console.log(responseData);
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        } else {
+          setMessage(responseData.message);
+        }
+      } catch (err: any) {
+        setError(err.message || "Something went wrong, please try again.");
+        throw err;
+      }
+    }
+
     console.log(formState.inputs);
   };
+
   return (
     <div>
       <div className="flex flex-col justify-center items-center pt-14">
@@ -82,54 +133,39 @@ const Login = () => {
           </div>
           <form onSubmit={loginSubmitHandler} className="flex flex-col gap-3">
             <div className="block relative">
-              {isLoginMode && (
+              <Input
+                element="input"
+                id="email"
+                type="email"
+                label="E-mail"
+                validators={[VALIDATOR_EMAIL()]}
+                errorText="Please enter a Valid email address"
+                onInput={inputHandler}
+                className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
+              />
+            </div>
+
+            {isLoginMode && (
+              <div className="block relative">
                 <Input
                   element="input"
-                  id="email"
-                  type="email"
-                  label="E-mail"
-                  validators={[VALIDATOR_EMAIL()]}
-                  errorText="Please enter a Valid email address"
+                  id="password"
+                  type="password"
+                  label="Password"
+                  validators={[VALIDATOR_MINLENGTH(6)]}
+                  errorText="Please enter a valid password, at least 6 characters"
                   onInput={inputHandler}
-                  className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
+                  className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2 ring-gray-900 outline-0"
                 />
-              )}
-            </div>
-            {!isLoginMode && (
-              <Input
-                element="input"
-                id="codeVerification"
-                type="text"
-                label="OTP verificationCode"
-                validators={[VALIDATOR_REQUIRE(), VALIDATOR_MAXLENGTH(4)]}
-                errorText="PLease Tap the verification code from email, maximum 4 chiffres"
-                onInput={inputHandler}
-              />
+              </div>
             )}
-            <div className="block relative">
-              <Input
-                element="input"
-                id="password"
-                type="Password"
-                label="Password"
-                validators={[VALIDATOR_MINLENGTH(5)]}
-                errorText="Please enter a valid password,at least 5 characters"
-                onInput={inputHandler}
-                className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2 ring-gray-900 outline-0"
-              />
-            </div>
             <div>
-              {/* <a className="text-sm text-[#7747ff]" href="/reset_password">
-                Forgot your password?
-              </a> */}
-              {isLoginMode && (
-                <button
-                  onClick={switchResetHandler}
-                  className="text-sm text-[#7747ff]"
-                >
-                  Forgot your password?
-                </button>
-              )}
+              <button
+                onClick={switchResetHandler}
+                className="text-sm text-[#7747ff]"
+              >
+                {isLoginMode ? "Forgot your password?" : "Login again"}
+              </button>
             </div>
             <button
               type="submit"
@@ -143,6 +179,11 @@ const Login = () => {
             >
               Submit
             </button>
+            {!isLoginMode && (
+              <p className=" text-center text-orange-600 font-serif">
+                Please enter your email again and submit!
+              </p>
+            )}
           </form>
           {isLoginMode && (
             <div className="text-sm text-center mt-[1.6rem]">
@@ -151,6 +192,14 @@ const Login = () => {
                 Sign up for free!
               </a>
             </div>
+          )}
+          {isLoginMode && error && (
+            <p className=" text-red-600 font-sans text-center mt-8">{error}</p>
+          )}
+          {message && (
+            <p className=" text-cyan-700  mt-8 font-light text-center">
+              {message}
+            </p>
           )}
         </div>
       </div>

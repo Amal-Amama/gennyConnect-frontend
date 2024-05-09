@@ -32,9 +32,13 @@ const Input = (props: any) => {
   const changeHandler = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    const newValue =
+      event.target.type === "number"
+        ? parseFloat(event.target.value)
+        : event.target.value;
     dispatch({
       type: "CHANGE",
-      val: event.target.value,
+      val: newValue,
       validators: props.validators,
     });
   };

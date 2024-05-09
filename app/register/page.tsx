@@ -18,42 +18,45 @@ import InstitutionType from "./componenets/medInstituteTypeInput";
 
 const ROLES = [
   { id: "technician", role: "technician", imageSrc: "/technician_role.png" },
-  { id: "company", role: "company", imageSrc: "/company.png" },
+  { id: "company", role: "maintenance_company", imageSrc: "/company.png" },
   {
     id: "medical_institute",
-    role: "medical_institute",
+    role: "client",
     imageSrc: "/medical_institute_role.png",
   },
 ];
 
 const Register = () => {
+  const [error, setError] = useState();
+  const [message, setMessage] = useState();
   const [selectedOption, setselectedOption] = useState<string>("");
   const getInitialFormState = (role: string) => {
     switch (role) {
       case "technician":
         return {
-          diplome: { value: "", isValid: false },
+          diplome: { value: [], isValid: false },
           speciality: { value: "", isValid: false },
           certifications: { value: [], isValid: false },
-          yearsOfExperiens: { value: "", isValid: false },
+          yearsOfExperience: { value: 0, isValid: false },
         };
-      case "company":
+      case "maintenance_company":
         return {
-          nomcompany: { value: "", isValid: false },
+          companyName: { value: "", isValid: false },
           file: { value: null, isValid: false },
+          activityField: { value: "", isValid: false },
         };
-      case "medical_institute":
+      case "client":
         return {
           nomInstitution: { value: "", isValid: false },
-          activityDomaineofInstitute: { value: "", isValid: false },
-          typeOfmedicalInstitute: { value: "", isValid: false },
+          activityField: { value: "", isValid: false },
+          institutionType: { value: "", isValid: false },
           file: { value: null, isValid: false },
         };
       default:
         return {};
     }
   };
-  const [formState, inputHandler, setFormData] = useForm(
+  const [formState, inputHandler] = useForm(
     {
       role: { value: "", isValid: false },
       firstName: { value: "", isValid: false },
@@ -61,7 +64,7 @@ const Register = () => {
       password: { value: "", isValid: false },
       email: { value: "", isValid: false },
       location: { value: "", isValid: false },
-      languages: { value: "", isValid: false },
+      languages: { value: [], isValid: false },
       phoneNumber: { value: "", isValid: false },
       ...getInitialFormState(selectedOption),
     },
@@ -72,18 +75,72 @@ const Register = () => {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    // await fetch("http://localhost:5000/auth/signup", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     email: formState.inputs.email.value,
-    //     password: formState.inputs.password.value,
-    //     role: formState.inputs.inputs.role.value,
-    //   }),
-    // });
     console.log(formState.inputs);
+
+    try {
+      const formData = new FormData();
+      formData.append("email", formState.inputs.email?.value);
+      formData.append("role", formState.inputs.role?.value);
+      formData.append("password", formState.inputs.password?.value);
+      formData.append("firstName", formState.inputs.firstName?.value);
+      formData.append("lastName", formState.inputs.lastName?.value);
+      formData.append("location", formState.inputs.location?.value);
+      formData.append("mobileNumber", formState.inputs.phoneNumber?.value);
+      console.log(formState.inputs.role?.value);
+      const arrLang = formState.inputs.languages.value || [];
+      arrLang.forEach((language: string) => {
+        formData.append("spokenLanguages[]", language);
+      });
+      if (formState.inputs.role.value === "technician") {
+        const arrCertif = formState.inputs.certifications.value || [];
+        arrCertif.forEach((certif: any) => {
+          formData.append("certifications", certif);
+        });
+        formData.append("diplome", formState.inputs.diplome?.value[0]);
+        formData.append("specialty", formState.inputs.speciality?.value);
+        formData.append(
+          "yearsOfExperience",
+          formState.inputs.yearsOfExperience?.value
+        );
+        console.log(
+          formState.inputs.diplome?.value,
+          formState.inputs.speciality?.value
+        );
+        console.log(formState.inputs.certifications?.value);
+      } else if (formState.inputs.role.value === "maintenance_company") {
+        formData.append("companyName", formState.inputs.companyName?.value);
+        formData.append("activityField", formState.inputs.activityField?.value);
+        formData.append("logo", formState.inputs.file?.value);
+      } else {
+        formData.append(
+          "medicalInstitutionName",
+          formState.inputs.nomInstitution?.value
+        );
+
+        formData.append(
+          "institutionType",
+          formState.inputs.institutionType?.value
+        );
+        formData.append("activityField", formState.inputs.activityField?.value);
+        formData.append("logo", formState.inputs.file?.value);
+        console.log(formState.inputs.file?.value);
+      }
+
+      const response = await fetch("http://localhost:5000/auth/signup", {
+        method: "POST",
+        body: formData,
+      });
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        setMessage(responseData.message);
+        throw new Error(responseData.message);
+      } else {
+        setMessage(responseData.message);
+      }
+    } catch (err: any) {
+      // setError(err.message || "Something went wrong, please try again.");
+    }
   };
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,6 +167,7 @@ const Register = () => {
       <div className="flex flex-row justify-between items-start pt-16">
         <Platform />
         <form
+          encType="multipart/form-data"
           onSubmit={registerSubmitHandler}
           className=" flex flex-col gap-3 max-w-3xl bg-[#fff]  relative rounded-lg w-full h-full  mr-40 p-32 mb-16"
         >
@@ -184,7 +242,7 @@ const Register = () => {
             id="password"
             type="Password"
             label="Password"
-            validators={[VALIDATOR_MINLENGTH(5)]}
+            validators={[VALIDATOR_MINLENGTH(6)]}
             errorText="Please enter a valid password,at least 5 characters"
             onInput={inputHandler}
             className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2 ring-gray-900 outline-0"
@@ -202,6 +260,7 @@ const Register = () => {
 
           <PhoneForm id="phoneNumber" inputHandler={inputHandler} />
           <LanguageForm id="languages" inputHandler={inputHandler} />
+
           {selectedOption === "technician" && (
             <div>
               <p className=" text-orange-600 font-mono font-bold underline">
@@ -221,17 +280,17 @@ const Register = () => {
               />
               <Input
                 element="input"
-                id="yearsOfExperiens"
+                id="yearsOfExperience"
                 type="number"
                 label="Years of experience"
-                validators={[VALIDATOR_REQUIRE()]}
+                validators={[]}
                 errorText="Please enter your experiences years"
                 onInput={inputHandler}
                 className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
               />
             </div>
           )}
-          {selectedOption === "medical_institute" && (
+          {selectedOption === "client" && (
             <div>
               <p className="  text-orange-600 font-mono font-bold underline">
                 medical_institute
@@ -249,34 +308,44 @@ const Register = () => {
 
               <Input
                 element="input"
-                id="activityDomaineofInstitute"
-                type="activityDomaineofInstitute"
-                label="activityDomaineofInstitute"
+                id="activityField"
+                type="activityField"
+                label="activityField"
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Please enter your activity domain"
+                errorText="Please enter your activity field"
                 onInput={inputHandler}
                 className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
               />
 
               <InstitutionType
-                id="typeOfmedicalInstitute"
+                id="institutionType"
                 inputHandler={inputHandler}
               />
               <ImageUpload center id="file" onInput={inputHandler} />
             </div>
           )}
-          {selectedOption === "company" && (
+          {selectedOption === "maintenance_company" && (
             <div>
               <p className=" text-orange-600 font-mono font-bold underline">
                 company
               </p>
               <Input
                 element="input"
-                id="nomcompany"
-                type="nomcompany"
+                id="companyName"
+                type="companyName"
                 label="Name of comany"
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Please enter the name of the medical institute"
+                errorText="Please enter the name of maintenance_company"
+                onInput={inputHandler}
+                className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
+              />
+              <Input
+                element="input"
+                id="activityField"
+                type="activityField"
+                label="activityField"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Please enter your activity field"
                 onInput={inputHandler}
                 className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
               />
@@ -294,6 +363,14 @@ const Register = () => {
           >
             Submit
           </button>
+          {message === error ? (
+            <p className=" text-red-600 font-sans text-center ">{message}</p>
+          ) : (
+            <div>
+              <p className=" text-red-600 font-sans text-center">{message}</p>
+              <p className=" text-red-600 font-sans text-center">{error}</p>
+            </div>
+          )}
           <p className="text-gray-500 text-sm items-center">
             Already have an acount ?
             <a
