@@ -51,10 +51,10 @@ const FileUpload = ({ id, onInput, errorText, center }: any) => {
           {!previewUrl && <p className="text-gray-500">Please pick a logo.</p>}
         </div>
         <button type="button" onClick={pickFileHandler} className="button">
-          Logo
+          {id === "profilImage" ? "image" : "Logo"}
         </button>
-        {!isValid && <p>{errorText}</p>}
       </div>
+      {!isValid && <p className=" text-red-600 font-sans">{errorText}</p>}
     </div>
   );
 };

@@ -12,7 +12,7 @@ import {
 import useForm from "../shared/hooks/form-hook";
 import Link from "next/link";
 const confirmResetPasswordForm = () => {
-  const [message, setMessage] = useState();
+  const [message, setMessage] = useState<null | undefined>(undefined);
   const [error, setError] = useState("");
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -44,11 +44,13 @@ const confirmResetPasswordForm = () => {
         throw new Error(responseData.message);
       } else {
         setMessage(responseData.message);
+        setError("");
       }
     } catch (err) {
       setError(
         "Something went wrong, please check your credentiels or try again later."
       );
+      setMessage(null);
       throw err;
     }
 

@@ -3,7 +3,9 @@ const countryCodes: { name: string; code: string }[] = [
   { name: "country", code: "" },
   { name: "US", code: "+1" },
   { name: "UK", code: "+44" },
-  { name: "CA", code: "+1" },
+  { name: "TN", code: "+216" },
+  { name: "ALG", code: "+213" },
+  { name: "PLS", code: "+972" },
 ];
 const PhoneForm = ({ id, inputHandler }: any) => {
   const [selectedCountry, setSelectedCountry] = useState<string>("");

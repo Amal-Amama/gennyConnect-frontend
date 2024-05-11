@@ -16,7 +16,6 @@ const Login = () => {
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: { value: "", isValid: false },
-      password: { value: "", isValid: false },
     },
     false
   );
@@ -29,12 +28,14 @@ const Login = () => {
     } else {
       setFormData(
         {
-          ...formState.inputs,
+          email: { value: "", isValid: false },
           password: undefined,
         },
         false
       );
     }
+    setError(null);
+    setMessage(null);
     setIsLoginMode((prevMode) => !prevMode);
   };
 
@@ -58,17 +59,15 @@ const Login = () => {
         if (!response.ok) {
           throw new Error(responseData.message);
         } else {
+          console.log(responseData);
           setMessage(responseData.message);
+          setError(null);
         }
       } catch (err: any) {
         setError(err.message || "Something went wrong, please try again.");
         throw err;
       }
-    } else if (
-      !isLoginMode &&
-      formState.inputs.email.isValid &&
-      formState.isValid
-    ) {
+    } else {
       try {
         const response = await fetch(
           "http://localhost:5000/auth/reset-password",
@@ -86,6 +85,7 @@ const Login = () => {
           throw new Error(responseData.message);
         } else {
           setMessage(responseData.message);
+          setError(null);
         }
       } catch (err: any) {
         setError(err.message || "Something went wrong, please try again.");
@@ -193,7 +193,7 @@ const Login = () => {
               </a>
             </div>
           )}
-          {isLoginMode && error && (
+          {error && (
             <p className=" text-red-600 font-sans text-center mt-8">{error}</p>
           )}
           {message && (

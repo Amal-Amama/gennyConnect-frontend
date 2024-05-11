@@ -27,7 +27,7 @@ const ROLES = [
 ];
 
 const Register = () => {
-  const [error, setError] = useState();
+  const [error, setError] = useState<null | undefined>(undefined);
   const [message, setMessage] = useState();
   const [selectedOption, setselectedOption] = useState<string>("");
   const getInitialFormState = (role: string) => {
@@ -42,7 +42,7 @@ const Register = () => {
       case "maintenance_company":
         return {
           companyName: { value: "", isValid: false },
-          file: { value: null, isValid: false },
+          image: { value: null, isValid: false },
           activityField: { value: "", isValid: false },
         };
       case "client":
@@ -50,7 +50,7 @@ const Register = () => {
           nomInstitution: { value: "", isValid: false },
           activityField: { value: "", isValid: false },
           institutionType: { value: "", isValid: false },
-          file: { value: null, isValid: false },
+          image: { value: null, isValid: false },
         };
       default:
         return {};
@@ -110,7 +110,7 @@ const Register = () => {
       } else if (formState.inputs.role.value === "maintenance_company") {
         formData.append("companyName", formState.inputs.companyName?.value);
         formData.append("activityField", formState.inputs.activityField?.value);
-        formData.append("logo", formState.inputs.file?.value);
+        formData.append("logo", formState.inputs.image?.value);
       } else {
         formData.append(
           "medicalInstitutionName",
@@ -122,8 +122,8 @@ const Register = () => {
           formState.inputs.institutionType?.value
         );
         formData.append("activityField", formState.inputs.activityField?.value);
-        formData.append("logo", formState.inputs.file?.value);
-        console.log(formState.inputs.file?.value);
+        formData.append("logo", formState.inputs.image?.value);
+        console.log(formState.inputs.image?.value);
       }
 
       const response = await fetch("http://localhost:5000/auth/signup", {
@@ -133,10 +133,11 @@ const Register = () => {
       const responseData = await response.json();
 
       if (!response.ok) {
-        setMessage(responseData.message);
+        setError(responseData.message);
         throw new Error(responseData.message);
       } else {
         setMessage(responseData.message);
+        setError(null);
       }
     } catch (err: any) {
       // setError(err.message || "Something went wrong, please try again.");
@@ -266,8 +267,18 @@ const Register = () => {
               <p className=" text-orange-600 font-mono font-bold underline">
                 technician
               </p>
-              <PDFUpload center id="diplome" onInput={inputHandler} />
-              <PDFUpload center id="certifications" onInput={inputHandler} />
+              <PDFUpload
+                center
+                id="diplome"
+                onInput={inputHandler}
+                errorText="provide a valid PDF"
+              />
+              <PDFUpload
+                center
+                id="certifications"
+                onInput={inputHandler}
+                errorText="provide a valid PDFs"
+              />
               <Input
                 element="input"
                 id="speciality"
@@ -321,7 +332,12 @@ const Register = () => {
                 id="institutionType"
                 inputHandler={inputHandler}
               />
-              <ImageUpload center id="file" onInput={inputHandler} />
+              <ImageUpload
+                center
+                id="image"
+                onInput={inputHandler}
+                errorText="provide a valid image"
+              />
             </div>
           )}
           {selectedOption === "maintenance_company" && (
@@ -349,7 +365,12 @@ const Register = () => {
                 onInput={inputHandler}
                 className="rounded border border-gray-200 text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2  ring-gray-900 outline-0 mb-4"
               />
-              <ImageUpload center id="file" onInput={inputHandler} />
+              <ImageUpload
+                center
+                id="image"
+                onInput={inputHandler}
+                errorText="provide a valid image"
+              />
             </div>
           )}
           <button
