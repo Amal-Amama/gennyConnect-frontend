@@ -1,18 +1,19 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-import Platform from "../componenets/platform_presentation";
-import Input from "../shared/FormElements/Input";
+import Platform from "../../componenets/platform_presentation";
+import Input from "../../shared/FormElements/Input";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
-} from "../shared/util/validators";
-import useForm from "../shared/hooks/form-hook";
-
+} from "../../shared/util/validators";
+import useForm from "../../shared/hooks/form-hook";
+import { useAuth } from "../../shared/context/auth-context";
 const Login = () => {
   const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
   const [error, setError] = useState<null | undefined>(undefined);
-  const [message, setMessage] = useState<null | undefined>(undefined);
+  const [message, setMessage] = useState<null | undefined | string>(undefined);
+  const { handleLogin } = useAuth();
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: { value: "", isValid: false },
@@ -46,23 +47,30 @@ const Login = () => {
 
     if (isLoginMode) {
       try {
-        const response = await fetch("http://localhost:5000/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-        });
-        const responseData = await response.json();
+        // const response = await fetch("http://localhost:5000/auth/login", {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({
+        //     email: formState.inputs.email.value,
+        //     password: formState.inputs.password.value,
+        //   }),
+        // });
+        // const responseData = await response.json();
+        // if (!response.ok) {
+        //   throw new Error(responseData.message);
+        // } else {
+        //   console.log(responseData);
+        //   localStorage.setItem("user", JSON.stringify(responseData));
+        //   setMessage(responseData.message);
+        //   setError(null);
+        // }
 
-        if (!response.ok) {
-          throw new Error(responseData.message);
-        } else {
-          console.log(responseData);
-          setMessage(responseData.message);
-          setError(null);
-        }
+        await handleLogin({
+          email: formState.inputs.email.value,
+          password: formState.inputs.password.value,
+        });
+        setMessage("user Logged Successfully!");
+        setError(null);
       } catch (err: any) {
         setError(err.message || "Something went wrong, please try again.");
         throw err;

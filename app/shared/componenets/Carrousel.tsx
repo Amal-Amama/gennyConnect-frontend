@@ -33,7 +33,7 @@ const Carousel = () => {
         clearInterval(autoplayInterval);
       }
     };
-  }, [autoplay, autoplayInterval]);
+  }, []);
 
   const nextSlide = () => {
     setCurrentSlide((prevSlide) =>

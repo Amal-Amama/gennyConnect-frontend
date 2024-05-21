@@ -1,19 +1,19 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
-import Input from "../shared/FormElements/Input";
+import React, { useContext, useState } from "react";
+import Input from "../../shared/FormElements/Input";
 
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
-} from "../shared/util/validators";
-import Platform from "../componenets/platform_presentation";
-import useForm from "../shared/hooks/form-hook";
+} from "../../shared/util/validators";
+import Platform from "../../componenets/platform_presentation";
+import useForm from "../../shared/hooks/form-hook";
 import PhoneForm from "./componenets/phoneInput";
 import LanguageForm from "./componenets/languageInput";
-import ImageUpload from "../shared/FormElements/ImageUpload";
-import PDFUpload from "../shared/FormElements/PDFUpload";
+import ImageUpload from "../../shared/FormElements/ImageUpload";
+import PDFUpload from "../../shared/FormElements/PDFUpload";
 import InstitutionType from "./componenets/medInstituteTypeInput";
 
 const ROLES = [

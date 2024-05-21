@@ -1,3 +1,4 @@
+import React from "react";
 import Image from "next/image";
 import NavLink from "./shared/componenets/NavLink";
 import Carrousel from "./shared/componenets/Carrousel";
@@ -13,6 +14,7 @@ export default function Home() {
     { title: "Contact_Us", path: "/#contactUs" },
     { title: "Login", path: "/login" },
   ];
+
   return (
     <div>
       <nav className="navbar">

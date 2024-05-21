@@ -48,10 +48,17 @@ const FileUpload = ({ id, onInput, errorText, center }: any) => {
       <div className={`image-upload ${center && "center"}`}>
         <div className="image-upload__preview">
           {previewUrl && <img src={previewUrl} alt="Preview" />}
-          {!previewUrl && <p className="text-gray-500">Please pick a logo.</p>}
+          {!previewUrl && (
+            <p className="text-gray-500">
+              {" "}
+              {id === "profilImage" || id === "imageMaintenance"
+                ? "Pick a Image"
+                : "Pick a Logo"}
+            </p>
+          )}
         </div>
         <button type="button" onClick={pickFileHandler} className="button">
-          {id === "profilImage" ? "image" : "Logo"}
+          {id === "profilImage" || id === "imageMaintenance" ? "image" : "Logo"}
         </button>
       </div>
       {!isValid && <p className=" text-red-600 font-sans">{errorText}</p>}

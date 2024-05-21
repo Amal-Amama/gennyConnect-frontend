@@ -1,15 +1,15 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import Platform from "../componenets/platform_presentation";
-import Input from "../shared/FormElements/Input";
+import Platform from "../../componenets/platform_presentation";
+import Input from "../../shared/FormElements/Input";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MAXLENGTH,
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
-} from "../shared/util/validators";
-import useForm from "../shared/hooks/form-hook";
+} from "../../shared/util/validators";
+import useForm from "../../shared/hooks/form-hook";
 import Link from "next/link";
 const confirmResetPasswordForm = () => {
   const [message, setMessage] = useState<null | undefined>(undefined);
